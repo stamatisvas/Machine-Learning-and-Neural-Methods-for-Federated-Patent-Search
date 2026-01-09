@@ -1,0 +1,5 @@
+# Core dependencies
+beautifulsoup4>=4.8.0
+googletrans>=4.0.0rc1
+pyserini>=0.9.4.0
+numpy>=1.21.0
