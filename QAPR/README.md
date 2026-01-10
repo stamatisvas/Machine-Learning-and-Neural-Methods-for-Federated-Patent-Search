@@ -4,10 +4,11 @@
 
 Reproducible implementation of **two papers**:
 
-1. **"A Novel Re-ranking Architecture for Patent Search"** (QAPR for re-ranking)
-2. **"Beyond BM25: Strengthening First-Stage Patent Retrieval with Query-Aware Hybridization"** (QAPR for first-stage retrieval)
+1. **"A Novel Re-ranking Architecture for Patent Search"** (QAPR for re-ranking) By Vasileios Stamatis, Michail Salampasis, Konstantinos Diamantaras.
 
-By Vasileios Stamatis, Michail Salampasis, Konstantinos Diamantaras.
+2. **"Beyond BM25: Strengthening First-Stage Patent Retrieval with Query-Aware Hybridization"** (QAPR for first-stage retrieval) By Vasileios Stamatis and Michail Salampasis
+
+
 
 ## Overview
 
@@ -50,11 +51,16 @@ Key dependencies:
 
 ## Dataset
 
-**CLEF-IP 2011**: The scripts expect SGML-formatted patents (output from [CLEF-IP pipeline](../CLEF-IP/README.md) or similar).
+**CLEF-IP 2011**: The scripts expect **SGML-formatted patents** (processed output).
+
+- **Preprocessing required**: Run the [CLEF-IP pipeline](../CLEF-IP/README.md) first (Steps 1-2) to convert raw XML to SGML format
+- **Input for QAPR**: Use the SGML files from `CLEF-IP/data/sgml/`
 
 ## Usage
 
 ### Paper 1: QAPR for Re-ranking (CLEF-IP)
+
+**Prerequisites**: Complete [CLEF-IP pipeline](../CLEF-IP/README.md) Steps 1-2 first.
 
 Run scripts 1-7 in order:
 
@@ -147,7 +153,9 @@ Evaluates results using MAP, RECALL, P@10, P@20, NDCG.
 
 ### Paper 2: QAPR for First-Stage Retrieval (WPI-PR)
 
-After completing steps 1-7, run additional scripts for first-stage retrieval experiments:
+**Prerequisites**: Complete [WPI-PR pipeline](../WPI-PR/README.md) (Steps 1-4) to process WPI dataset and generate SGML files and qrels.
+
+After completing QAPR steps 1-7 with WPI-PR data, run additional scripts for first-stage retrieval experiments:
 
 ### Step 8: Index Dense Models
 
@@ -224,14 +232,33 @@ Tests QAPR generalizability on MSMARCO dataset (from Paper 1).
 
 ## Configuration
 
-Edit `config.yaml`:
+Edit `config.yaml` based on which experiment you're running:
+
+### For Paper 1 (CLEF-IP Re-ranking)
 
 ```yaml
 # Paths
-index_dir: "./index"
-documents_dir: "/path/to/sgml/documents"
-topics_file: "/path/to/topics.xml"
-qrels_file: "/path/to/qrels.txt"
+index_dir: "./index"  # Output directory (created automatically, no need to change)
+documents_dir: "/path/to/CLEF-IP/data/sgml/"  # UPDATE: From CLEF-IP pipeline Step 2
+topics_file: "/path/to/CLEF-IP/data/300_topics_set3_EN.txt"  # UPDATE: From CLEF-IP pipeline Step 7
+qrels_file: "/path/to/CLEF-IP/qrels.txt"  # UPDATE: CLEF-IP qrels file
+```
+
+### For Paper 2 (WPI-PR First-Stage Retrieval)
+
+```yaml
+# Paths
+index_dir: "./index"  # Output directory (created automatically, no need to change)
+documents_dir: "/path/to/wpi_sgml/data/"  # UPDATE: From WPI-PR pipeline Step 2
+topics_dir: "/path/to/wpi_sgml/topics/"  # UPDATE: From WPI-PR pipeline Step 2
+qrels_file: "/path/to/wpi_qrels.txt"  # UPDATE: From WPI-PR pipeline Step 4
+```
+
+### Common Parameters
+
+```yaml
+# Output directory (created automatically)
+output_dir: "./output"
 
 # Parameters
 top_k: 1000              # Number of candidates for re-ranking
@@ -384,17 +411,6 @@ Both trained on 19 features to predict relevance.
   - 512 tokens per section, embeddings averaged
 - **ColBERT**: Late-interaction retrieval
   - 256 tokens from abstract only (computational constraints)
-
-## Citation
-
-```bibtex
-@article{stamatis2024patent,
-  title={A Novel Re-ranking Architecture for Patent Search},
-  author={Stamatis, Vasileios and Salampasis, Michail and Diamantaras, Konstantinos},
-  journal={...},
-  year={2024}
-}
-```
 
 ## Notes
 

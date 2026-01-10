@@ -2,7 +2,7 @@
 
 > **Part of**: [Machine Learning and Neural Methods for Federated Patent Search](../README.md) - PhD Research by Vasileios Stamatis
 
-This repository contains scripts to prepare the CLEF-IP 2011 dataset for results merging experiments.
+This repository contains scripts to prepare the CLEF-IP 2011 dataset for results merging and QAPR re-ranking experiments.
 
 ## Overview
 
@@ -19,6 +19,8 @@ The data preparation pipeline consists of 7 steps:
 ## Prerequisites
 
 1. Download CLEF-IP 2011 dataset from http://www.ifs.tuwien.ac.at/~clef-ip/download/2011/index.shtml
+   - **Corpus**: Patent documents in **XML format**
+   - **Topics**: Query patent documents (also XML)
 2. Install Anserini (https://github.com/castorini/anserini)
 3. Install Python dependencies: `pip install -r requirements.txt`
 
@@ -35,8 +37,8 @@ Required Python packages:
 Edit `config.py` and set the following paths:
 
 ```python
-CLEF_IP_RAW_PATH = '/path/to/CLEF-IP-2011/'
-TOPICS_PATH = '/path/to/PAC_topics/files/'
+CLEF_IP_RAW_PATH = '/path/to/CLEF-IP-2011/'  # XML patent corpus
+TOPICS_PATH = '/path/to/CLEF-IP-2011/topics/'  # XML topic files
 ANSERINI_HOME = '/path/to/anserini/'
 ```
 
@@ -44,7 +46,7 @@ Alternatively, set environment variables:
 
 ```bash
 export CLEF_IP_RAW_PATH=/path/to/CLEF-IP-2011/
-export TOPICS_PATH=/path/to/PAC_topics/files/
+export TOPICS_PATH=/path/to/CLEF-IP-2011/topics/
 export ANSERINI_HOME=/path/to/anserini/
 ```
 

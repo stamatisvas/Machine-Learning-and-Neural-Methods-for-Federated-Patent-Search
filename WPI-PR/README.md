@@ -187,30 +187,6 @@ python 4_convert_qrels_format.py
 python 5_split_by_sections.py
 ```
 
-## Expected Processing Time
-
-For ~500,000 patents:
-- Step 1: 2-3 hours
-- Step 2: 3-4 hours
-- Step 3: 30 minutes
-- Step 4: <1 minute
-- Step 5: 1-2 hours
-
-## Disk Space Requirements
-
-- Input (XML): ~200 GB
-- Output (SGML): ~100 GB
-- Temporary: ~50 GB
-- **Total**: ~350 GB
-
-## Citation
-
-If you use this in your research, please cite:
-
-```
-Vasilis Stamatis, PhD Thesis, International Hellenic University, 2026
-```
-
 ## Notes
 
 - All paths are configured in `config.yaml`

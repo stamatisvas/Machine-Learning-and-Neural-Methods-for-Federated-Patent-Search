@@ -12,8 +12,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 
 # Input paths
-CLEF_IP_RAW_PATH = os.getenv('CLEF_IP_RAW_PATH', '/path/to/CLEF-IP-2011/')
-TOPICS_PATH = os.getenv('TOPICS_PATH', '/path/to/PAC_topics/files/')
+CLEF_IP_RAW_PATH = os.getenv('CLEF_IP_RAW_PATH', '/path/to/CLEF-IP-2011/')  # XML patent corpus
+TOPICS_PATH = os.getenv('TOPICS_PATH', '/path/to/CLEF-IP-2011/topics/')  # XML topic files
 
 # Output paths
 MERGED_XML_PATH = os.getenv('MERGED_XML_PATH', BASE_DIR / 'data/merged_xml/')

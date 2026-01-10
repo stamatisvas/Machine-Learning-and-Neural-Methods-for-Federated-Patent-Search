@@ -1,6 +1,6 @@
 # Machine Learning and Neural Methods for Federated Patent Search
 
-This repository contains the complete implementation code for the PhD thesis "Machine Learning and Neural Methods for Federated Patent Search" by Vasileios Stamatis, under the supervision of Prof. Michail Salampasis and Prof. Konstantinos Diamantaras at the International Hellenic University.
+This repository contains the complete implementation code for the PhD thesis "Machine Learning and Neural Methods for Federated Patent Search" by Vasileios Stamatis, under the supervision of Prof. Michail Salampasis at the International Hellenic University.
 
 ## Overview
 
@@ -27,7 +27,7 @@ Machine-Learning-and-Neural-Methods-for-Federated-Patent-Search/
 
 **Location**: `CLEF-IP/`
 
-**Purpose**: Preprocesses the CLEF-IP 2011 dataset for use in federated search experiments.
+**Purpose**: Preprocesses the CLEF-IP 2011 dataset for use in the experiments.
 
 **Key Features**:
 - Merges different patent document kinds (A1, B2, etc.)
@@ -38,7 +38,7 @@ Machine-Learning-and-Neural-Methods-for-Federated-Patent-Search/
 
 **Used By**: Results_Merging, QAPR
 
-**Dataset**: CLEF-IP 2011 (3.2M patent documents from EPO)
+**Dataset**: CLEF-IP 2011
 
 **Instructions**: See [CLEF-IP/README.md](CLEF-IP/README.md)
 
@@ -48,10 +48,10 @@ Machine-Learning-and-Neural-Methods-for-Federated-Patent-Search/
 
 **Location**: `WPI-PR/`
 
-**Purpose**: Processes WPI (World Patents Index) XML patents into SGML format and generates ground truth from patent citations.
+**Purpose**: Processes WPI Test Collection (https://zenodo.org/records/1489994) and generates ground truth from patent citations.
 
 **Key Features**:
-- Filters valid English patents
+- Filters valid English patents, by valid we mean the sections Abstract, Description, Claims of a document to be available in English
 - Converts XML to SGML/TREC format
 - Extracts patent citations for ground truth
 - Splits documents into sections (abstract, description, claims)
@@ -129,17 +129,15 @@ This research uses three main datasets:
 
 **Download**: [https://www.ifs.tuwien.ac.at/~clef-ip/download-central.shtml](https://www.ifs.tuwien.ac.at/~clef-ip/download-central.shtml)
 
-**License**: Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
-
 **Used In**: CLEF-IP pipeline, Results_Merging, QAPR (re-ranking experiments)
 
-### 2. WPI Patent Collection
+### 2. WPI-PR Patent Collection
 
-**Description**: World Patents Index XML patent collection
+**Description**: World patent documents with Abstract, Description, Claims in English
 
-**Size**: ~500,000 patents
+**Size**: ~1.8 M patents
 
-**Format**: XML with structured fields (title, abstract, description, claims, citations)
+**Format**: SGML with structured fields (title, abstract, description, claims, citations)
 
 **Used In**: WPI-PR processing, QAPR (first-stage retrieval experiments)
 
@@ -277,41 +275,6 @@ python 11_evaluate_all.py
 
 ---
 
-## Publications
-
-```bibtex
-@phdthesis{stamatis2026federated,
-  title={Machine Learning and Neural Methods for Federated Patent Search},
-  author={Stamatis, Vasileios},
-  year={2026},
-  school={International Hellenic University},
-  supervisor={Salampasis, Michail and Diamantaras, Konstantinos}
-}
-
-@article{stamatis2024patent,
-  title={A Novel Re-ranking Architecture for Patent Search},
-  author={Stamatis, Vasileios and Salampasis, Michail and Diamantaras, Konstantinos},
-  journal={...},
-  year={2024}
-}
-
-@article{stamatis2024beyond,
-  title={Beyond BM25: Strengthening First-Stage Patent Retrieval with Query-Aware Hybridization},
-  author={Stamatis, Vasileios and Salampasis, Michail and Diamantaras, Konstantinos},
-  journal={...},
-  year={2024}
-}
-
-@article{stamatis2024mlrm,
-  title={Machine Learning Methods for Results Merging (MLRM) in Patent Retrieval},
-  author={Stamatis, Vasileios and Salampasis, Michail and Diamantaras, Konstantinos},
-  journal={...},
-  year={2024}
-}
-```
-
----
-
 ## Citation
 
 If you use this code or data in your research, please cite:
@@ -344,11 +307,14 @@ This research code is provided for academic and research purposes. Each dataset 
 **Vasileios Stamatis**  
 PhD Candidate  
 International Hellenic University  
-Email: [your.email@ihu.gr]
+Email: vstamatis@ihu.gr
 
-**Supervisors**:
+**Supervisor**:
 - Prof. Michail Salampasis
+
+**Advisors**:
 - Prof. Konstantinos Diamantaras
+- Prof. Allan Hanbury
 
 ---
 
@@ -436,7 +402,7 @@ For issues or questions:
 1. Check the individual README files in each sub-project
 2. Review the PhD thesis document for theoretical details
 3. Open an issue on GitHub
-4. Contact: [your.email@ihu.gr]
+4. Contact: vstamatis@ihu.gr
 
 ---
 
