@@ -1,5 +1,7 @@
 # CLEF-IP Data Preparation Pipeline
 
+> **Part of**: [Machine Learning and Neural Methods for Federated Patent Search](../README.md) - PhD Research by Vasileios Stamatis
+
 This repository contains scripts to prepare the CLEF-IP 2011 dataset for results merging experiments.
 
 ## Overview

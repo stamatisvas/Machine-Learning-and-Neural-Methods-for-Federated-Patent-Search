@@ -1,0 +1,43 @@
+# QAPR Configuration
+
+# Paths
+index_dir: "./index"
+documents_dir: "/media/fps/ssd_1TB/wpi_sgml/data"
+topics_dir: "/media/fps/ssd_1TB/wpi_sgml/topics"
+qrels_file: "./data/wpi_qrels.txt"
+output_dir: "./output"
+
+# Dataset
+train_test_split: 0.8  # 80% train, 20% test
+
+# First-stage retrieval
+top_k: 1000  # Top-k candidates for re-ranking
+
+# Document splitting
+max_section_words: 500  # Maximum words per section (Abstract, Description, Claims)
+
+# BM25 parameters (from paper: k1=0.9, b=0.4)
+bm25_k1: 0.9
+bm25_b: 0.4
+
+# SBERT model (Google's BERT-for-patents from paper)
+sbert_model: "AI-Growth-Lab/PatentSBERTa"  # or "anferico/bert-for-patents"
+
+# Model selection
+use_lambdamart: true
+use_mlp: true
+
+# LambdaMART parameters
+lambdamart:
+  num_trees: 100
+  num_leaves: 10
+  learning_rate: 0.1
+  min_data_in_leaf: 20
+
+# MLP parameters (2 hidden layers from paper)
+mlp:
+  hidden_layers: [64, 32]
+  activation: "relu"
+  learning_rate: 0.001
+  epochs: 50
+  batch_size: 32

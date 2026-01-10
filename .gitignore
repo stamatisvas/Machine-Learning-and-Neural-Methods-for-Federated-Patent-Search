@@ -1,0 +1,114 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+
+# Data directories (typically too large for git)
+data/
+*/data/
+**/data/
+output/
+*/output/
+**/output/
+results/
+*/results/
+**/results/
+index/
+*/index/
+**/index/
+
+# CLEF-IP specific
+CLEF-IP/data/merged_xml/
+CLEF-IP/data/sgml/
+CLEF-IP/data/split3_data/
+CLEF-IP/data/split_3_index/
+CLEF-IP/data/Query_based_sampling_indexes/
+CLEF-IP/data/centralized_index/
+CLEF-IP/data/classifications_split3.txt
+CLEF-IP/data/300_topics_set3_EN.txt
+
+# WPI-PR specific
+WPI-PR/wpi_ground_truths.txt
+WPI-PR/wpi_qrels.txt
+
+# QAPR specific
+QAPR/index/
+QAPR/output/
+
+# Results_Merging specific
+Results_Merging/results/
+
+# Large datasets (never commit these)
+*.tar.gz
+*.zip
+*.7z
+*.xml.gz
+*.sgml.gz
+CLEF-IP-2011/
+WPI_Test_Collection*/
+msmarco*/
+
+# Model files (can be large)
+*.pkl
+*.h5
+*.pt
+*.pth
+*.ckpt
+*.model
+
+# Logs
+*.log
+logs/
+*.out
+*.err
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# PhD document drafts (keep only final version in repo)
+# phd.docx  # Uncomment if you don't want to track this
+
+# Environment variables
+.env
+.env.local

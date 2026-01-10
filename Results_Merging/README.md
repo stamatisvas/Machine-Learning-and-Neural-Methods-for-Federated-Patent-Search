@@ -1,5 +1,7 @@
 # Machine Learning Methods for Results Merging (MLRM) in Patent Retrieval
 
+> **Part of**: [Machine Learning and Neural Methods for Federated Patent Search](../README.md) - PhD Research by Vasileios Stamatis
+
 This repository contains code to reproduce the results from the paper "Machine Learning Methods for Results Merging (MLRM) in Patent Retrieval".
 
 ## Overview
@@ -70,12 +72,7 @@ export RESULTS_PATH=/path/to/results/
 ### 3. Prepare Data
 
 1. Download CLEF-IP 2011 dataset from http://www.ifs.tuwien.ac.at/~clef-ip/download/2011/index.shtml
-2. Run data preparation scripts from `Results_Merging/Data/`:
-   - `Clef-ip_merge_kinds.py` - Merge different patent documents
-   - `Clef-ip_sgml.py` - Convert to SGML format
-   - `split3_*.py` - Split by IPC codes (level 3)
-   - `Query_based_sampling.py` - Create representation sets
-   - `Queries_set3_300_EN.py` - Create queries
+2. Run the [CLEF-IP data preparation pipeline](../CLEF-IP/README.md) to process the dataset and create distributed collections
 
 ## Usage
 

@@ -1,0 +1,13 @@
+# WPI-PR Configuration
+# Update these paths to match your system
+
+# Input: Directory containing raw WPI XML files
+input_dir: "/media/fps/ssd_1TB/WPI_Test_Collection_unzipped/"
+
+# Output: Base directory for all outputs
+output_dir: "/media/fps/ssd_1TB/"
+
+# Processing parameters
+docs_per_folder: 30000  # Number of documents per subfolder
+language: "EN"          # Language filter
+min_citations: 2        # Minimum citations for ground truth queries
