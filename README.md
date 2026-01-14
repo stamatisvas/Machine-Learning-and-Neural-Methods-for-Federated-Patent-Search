@@ -286,7 +286,7 @@ If you use this code or data in your research, please cite:
   year = {2026},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/yourusername/Machine-Learning-and-Neural-Methods-for-Federated-Patent-Search}}
+  howpublished = {\url{https://github.com/stamatisvas/Machine-Learning-and-Neural-Methods-for-Federated-Patent-Search}}
 }
 ```
 
