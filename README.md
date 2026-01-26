@@ -20,6 +20,7 @@ Machine-Learning-and-Neural-Methods-for-Federated-Patent-Search/
 ├── QAPR/                 # Query-Adaptive Patent Re-ranking & Retrieval
 ├── WPI-PR/              # WPI patent collection processing
 ├── Results_Merging/     # ML-based results merging methods
+├── experimental_results/ # All experimental runs
 └── README.md            # This file
 ```
 
@@ -102,7 +103,7 @@ Machine-Learning-and-Neural-Methods-for-Federated-Patent-Search/
 - **Three Environments**: Cooperative, Uncooperative, Uncooperative Weighted
 
 **Models Implemented**:
-- Random Forest (best performer)
+- Random Forest
 - Decision Trees
 - Support Vector Regression (SVR)
 - Linear Regression
@@ -254,6 +255,23 @@ python 11_evaluate_all.py
 
 ---
 
+## Experimental Results
+
+**Location**: `experimental_results/`
+
+This repository includes **all experimental runs** from the PhD research:
+
+- **QAPR Experiments**: Baselines, re-ranking results, first-stage retrieval, MS MARCO adaptation
+- **Results Merging Experiments**: Multiple Models (MMs), Global Models (GMs), all baselines, detailed analysis
+
+See [experimental_results/README.md](experimental_results/README.md) for detailed documentation of runs, including:
+- File descriptions and naming conventions
+- Performance metrics and improvements
+- Baseline comparisons
+- Statistical significance results
+
+---
+
 ## Key Contributions
 
 ### 1. Query-Adaptive Re-ranking (QAPR)
@@ -270,8 +288,8 @@ python 11_evaluate_all.py
 ### 3. Machine Learning for Results Merging
 - Multiple Models (MMs) approach: One model per resource
 - Global Models (GMs) approach: One model for all resources
-- Random Forest achieves best overall performance
-- DNN achieves best MAP performance in Global Models
+- MMs Random Forest achieves best overall performance
+- GMs DNN achieves best MAP performance
 
 ---
 
@@ -373,6 +391,11 @@ Machine-Learning-and-Neural-Methods-for-Federated-Patent-Search/
 │   ├── scripts/              # Experiment runners
 │   ├── config.py             # Configuration
 │   └── README.md             # Detailed instructions
+│
+├── experimental_results/      # All experimental runs
+│   ├── qapr/                 # QAPR experiments
+│   ├── results_merging/      # Results merging experiments
+│   └── README.md             # Detailed results documentation
 │
 ├── phd.docx                   # PhD thesis document
 └── README.md                  # This file

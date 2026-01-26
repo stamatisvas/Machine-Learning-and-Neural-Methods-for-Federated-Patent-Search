@@ -48,12 +48,16 @@ data/
 output/
 */output/
 **/output/
-results/
-*/results/
-**/results/
 index/
 */index/
 **/index/
+
+# Exclude results directories EXCEPT experimental_results
+results/
+*/results/
+**/results/
+!experimental_results/
+!experimental_results/**
 
 # CLEF-IP specific
 CLEF-IP/data/merged_xml/
@@ -85,6 +89,7 @@ Results_Merging/results/
 CLEF-IP-2011/
 WPI_Test_Collection*/
 msmarco*/
+!experimental_results/qapr/msmarco_adaptation/
 
 # Model files (can be large)
 *.pkl
