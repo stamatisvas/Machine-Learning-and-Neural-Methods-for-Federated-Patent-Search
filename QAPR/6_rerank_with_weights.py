@@ -78,7 +78,6 @@ if USE_LAMBDAMART:
     combined_scores = lambdamart_model.predict(X_test)
     test_df['combined_score'] = combined_scores
     
-    # Calculate final scores with query weights
     print("Calculating final scores with query-specific alpha...")
     
     final_results = {}
@@ -122,19 +121,17 @@ if USE_MLP:
     print("Re-ranking with MLP + Query Weights...")
     print("-" * 80)
     
-    # Load model and scaler
+    # Load model
     mlp_model = load_pickle(MODELS_DIR / "mlp.pkl")
-    scaler = load_pickle(MODELS_DIR / "scaler.pkl")
     
-    # Scale features
-    X_test_scaled = scaler.transform(X_test)
+    # No feature scaling at inference.
+    X_test_scaled = X_test
     
     # Predict combined scores
     print("Predicting combined scores...")
     combined_scores = mlp_model.predict(X_test_scaled)
     test_df['combined_score_mlp'] = combined_scores
     
-    # Calculate final scores with query weights
     print("Calculating final scores with query-specific alpha...")
     
     final_results = {}
@@ -157,10 +154,7 @@ if USE_MLP:
             combined = row['combined_score_mlp']
             max_lex = row['max_lex']
             max_sem = row['max_sem']
-            
-            # Final Score = CombinedScore + α * MaxLex + (1-α) * MaxSem
             final_score = combined + alpha * max_lex + (1 - alpha) * max_sem
-            
             final_scores.append((doc_id, final_score))
         
         final_results[query_id] = final_scores

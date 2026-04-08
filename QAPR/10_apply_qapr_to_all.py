@@ -37,7 +37,6 @@ doc_splits = load_pickle(SPLITS_DIR / "document_splits.pkl")
 topic_splits = load_pickle(SPLITS_DIR / "topic_splits.pkl")
 idf_dict = load_pickle(SPLITS_DIR / "idf_dict.pkl")
 mlp_model = load_pickle(MODELS_DIR / "mlp.pkl")
-scaler = load_pickle(MODELS_DIR / "scaler.pkl")
 
 # Load SBERT model
 print(f"Loading SBERT model: {SBERT_MODEL}...")
@@ -163,8 +162,8 @@ def apply_qapr(ranking_file, method_name):
             
             feature_vector = np.array(feature_vector).reshape(1, -1)
             
-            # Scale and predict
-            feature_vector_scaled = scaler.transform(feature_vector)
+            # No feature scaling at inference.
+            feature_vector_scaled = feature_vector
             combined_score = mlp_model.predict(feature_vector_scaled)[0]
             
             # Final score with query-specific weights

@@ -6,14 +6,13 @@ Extracts lexical (BM25) and semantic (SBERT) features for all 9 section pairs.
 Implements Section 3.2 from the paper: Interpolating Lexical and Semantic Similarity.
 """
 
-import os
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-from utils import load_config, load_pickle, load_qrels
+from utils import load_config, load_pickle
 from tqdm import tqdm
 
 config = load_config()
@@ -21,7 +20,6 @@ config = load_config()
 INITIAL_RANKING_FILE = Path(config['output_dir']) / "initial_ranking.tsv"
 SPLITS_DIR = Path(config['output_dir']) / "splits"
 OUTPUT_DIR = Path(config['output_dir']) / "features"
-QRELS_FILE = config['qrels_file']
 TRAIN_TEST_SPLIT = config['train_test_split']
 SBERT_MODEL = config['sbert_model']
 
@@ -42,10 +40,6 @@ idf_dict = load_pickle(SPLITS_DIR / "idf_dict.pkl")
 # Load initial rankings
 print("Loading initial rankings...")
 initial_ranking = pd.read_csv(INITIAL_RANKING_FILE, sep='\t')
-
-# Load qrels for labels
-print("Loading qrels...")
-qrels = load_qrels(QRELS_FILE)
 
 # Load SBERT model
 print(f"Loading SBERT model: {SBERT_MODEL}...")
@@ -156,12 +150,6 @@ for query_id, group in tqdm(initial_ranking.groupby('query_id'), desc="Processin
         features['max_lex'] = max(lex_scores) if lex_scores else 0
         features['max_sem'] = max(sem_scores) if sem_scores else 0
         
-        # Add label (relevance from qrels)
-        label = 0
-        if query_id in qrels and doc_id in qrels[query_id]:
-            label = qrels[query_id][doc_id]
-        features['label'] = label
-        
         features_list.append(features)
 
 # Create DataFrame
@@ -170,6 +158,23 @@ features_df = pd.DataFrame(features_list)
 
 print(f"Total features extracted: {len(features_df)}")
 print(f"Feature columns: {len(features_df.columns) - 3}")  # Exclude query_id, doc_id, label
+
+# Build synthetic labels:
+# For each query, min-max normalize the 18 local scores (9 lexical + 9 semantic)
+# column-wise across candidate documents, then sum (and average) the normalized
+# scores to obtain a continuous label in [0, 1].
+print("Building per-query normalized-sum labels...")
+local_score_cols = [col for col in features_df.columns
+                    if col.startswith('lex_') or col.startswith('sem_')]
+
+for query_id, group_idx in features_df.groupby('query_id').groups.items():
+    group_scores = features_df.loc[group_idx, local_score_cols]
+    mins = group_scores.min(axis=0)
+    maxs = group_scores.max(axis=0)
+    denom = (maxs - mins).replace(0, 1.0)
+    normalized = (group_scores - mins) / denom
+    # Average of normalized 18 scores keeps the label in [0, 1].
+    features_df.loc[group_idx, 'label'] = normalized.sum(axis=1) / len(local_score_cols)
 
 # Split into train/test based on query_id
 print("\nSplitting into train/test sets...")

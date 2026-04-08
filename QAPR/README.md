@@ -111,6 +111,10 @@ Extracts 19 features per query-document pair:
 - 9 lexical scores (BM25 for each section pair)
 - 9 semantic scores (SBERT for each section pair)
 
+Builds training labels per query by:
+- Min-max normalizing each of the 18 local scores (`9 lex + 9 sem`) across candidate docs
+- Summing normalized values and averaging by 18 (label range `[0, 1]`)
+
 **Output**: `./output/features/` (features_train.csv, features_test.csv)
 
 ---
@@ -123,7 +127,9 @@ python 5_train_models.py
 
 Trains LambdaMART and MLP on training features.
 
-**Output**: `./output/models/` (lambdamart.pkl, mlp.pkl, scaler.pkl)
+Feature scaling is not applied for MLP inputs; normalization is used only for label construction in Step 4.
+
+**Output**: `./output/models/` (lambdamart.pkl, mlp.pkl)
 
 ---
 
@@ -153,7 +159,7 @@ Evaluates results using MAP, RECALL, P@10, P@20, NDCG.
 
 ### Paper 2: QAPR for First-Stage Retrieval (WPI-PR)
 
-**Prerequisites**: Complete [WPI-PR pipeline](../WPI-PR/README.md) (Steps 1-4) to process WPI dataset and generate SGML files and qrels.
+**Prerequisites**: Complete [WPI-PR pipeline](../WPI-PR/README.md) (Steps 1-4) to process WPI dataset and generate SGML files (qrels are still needed for evaluation scripts).
 
 After completing QAPR steps 1-7 with WPI-PR data, run additional scripts for first-stage retrieval experiments:
 
@@ -395,7 +401,7 @@ QClm   × CAbstr, QClm   × CDesc, QClm   × CClm
 
 **MLP**: 2 hidden layers, ReLU activation
 
-Both trained on 19 features to predict relevance.
+Both are trained on 19 input features and a synthetic per-query label from normalized local-score sums.
 
 ## Baselines
 

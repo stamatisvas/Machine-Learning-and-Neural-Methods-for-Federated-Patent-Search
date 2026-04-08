@@ -5,14 +5,12 @@ Step 5: Train Models
 Trains LambdaMART and MLP models on extracted features.
 """
 
-import os
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from utils import load_config, save_pickle
 import lightgbm as lgb
 from sklearn.neural_network import MLPRegressor
-from sklearn.preprocessing import StandardScaler
 
 config = load_config()
 
@@ -96,9 +94,8 @@ if USE_MLP:
     # MLP parameters from config
     mlp_params = config['mlp']
     
-    # Normalize features
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
+    # No feature scaling: normalization is used only for label construction.
+    X_train_scaled = X_train
     
     # Create and train MLP
     mlp_model = MLPRegressor(
@@ -115,15 +112,12 @@ if USE_MLP:
     
     mlp_model.fit(X_train_scaled, y_train)
     
-    # Save model and scaler
+    # Save model
     mlp_file = MODELS_DIR / "mlp.pkl"
-    scaler_file = MODELS_DIR / "scaler.pkl"
     
     save_pickle(mlp_model, mlp_file)
-    save_pickle(scaler, scaler_file)
     
     print(f"\nMLP model saved to: {mlp_file}")
-    print(f"Scaler saved to: {scaler_file}")
 
 print("\n" + "=" * 80)
 print("Model training complete!")
