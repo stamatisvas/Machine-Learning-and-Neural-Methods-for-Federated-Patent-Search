@@ -11,6 +11,8 @@ Final Score = CombinedScore + α * MaxLex + (1-α) * MaxSem
 import pandas as pd
 import numpy as np
 from pathlib import Path
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 from utils import (load_config, load_pickle, calculate_query_alpha, 
                    write_trec_run)
 from tqdm import tqdm
@@ -21,8 +23,12 @@ FEATURES_DIR = Path(config['output_dir']) / "features"
 MODELS_DIR = Path(config['output_dir']) / "models"
 SPLITS_DIR = Path(config['output_dir']) / "splits"
 RESULTS_DIR = Path(config['output_dir']) / "results"
+INITIAL_RANKING_FILE = Path(config['output_dir']) / "initial_ranking.tsv"
 USE_LAMBDAMART = config['use_lambdamart']
 USE_MLP = config['use_mlp']
+SBERT_MODEL = config['sbert_model']
+BERT_COMB_WEIGHT = 0.25
+ABSTRACT_MAX_TOKENS = 512
 
 print("=" * 80)
 print("Step 6: Re-rank with Query Weights")
@@ -62,6 +68,93 @@ feature_cols = [col for col in test_df.columns
                 if col not in ['query_id', 'doc_id', 'label', 'max_lex', 'max_sem']]
 
 X_test = test_df[feature_cols].values
+
+
+def truncate_to_first_tokens(text, tokenizer, max_tokens=ABSTRACT_MAX_TOKENS):
+    """Keep only the first max_tokens tokenizer tokens from text."""
+    if not isinstance(text, str) or not text.strip():
+        return ""
+
+    token_ids = tokenizer.encode(
+        text,
+        add_special_tokens=False,
+        truncation=True,
+        max_length=max_tokens
+    )
+    if not token_ids:
+        return ""
+    return tokenizer.decode(token_ids, skip_special_tokens=True)
+
+
+def compute_combbert_bm25_baseline():
+    """
+    Compute CombBERT&BM25 baseline using abstract-only BERT score.
+    Formula: BM25 + 0.25 * BM25 * BERT
+    BERT uses first 512 tokenizer tokens of abstracts.
+    """
+    if not INITIAL_RANKING_FILE.exists():
+        print(f"Warning: {INITIAL_RANKING_FILE} not found, skipping CombBERT&BM25 baseline.")
+        return
+
+    print("\n" + "-" * 80)
+    print("Computing CombBERT&BM25 baseline (abstract-only, first 512 tokens)...")
+    print("-" * 80)
+
+    ranking_df = pd.read_csv(INITIAL_RANKING_FILE, sep='\t')
+    doc_splits = load_pickle(SPLITS_DIR / "document_splits.pkl")
+    print(f"Loaded {len(ranking_df)} initial ranked pairs")
+
+    sbert_model = SentenceTransformer(SBERT_MODEL)
+    tokenizer = sbert_model.tokenizer
+
+    query_emb_cache = {}
+    doc_emb_cache = {}
+    final_results = {}
+
+    for query_id, group in tqdm(ranking_df.groupby('query_id'), desc="Processing CombBERT&BM25"):
+        if query_id not in topic_splits:
+            continue
+
+        query_abstract = topic_splits[query_id].get('abstract', '')
+        query_text_512 = truncate_to_first_tokens(query_abstract, tokenizer)
+
+        if query_text_512 in query_emb_cache:
+            query_emb = query_emb_cache[query_text_512]
+        else:
+            query_emb = sbert_model.encode([query_text_512])
+            query_emb_cache[query_text_512] = query_emb
+
+        query_scores = []
+        for _, row in group.iterrows():
+            doc_id = row['doc_id']
+            bm25_score = float(row['score'])
+
+            if doc_id in doc_splits:
+                doc_abstract = doc_splits[doc_id].get('abstract', '')
+            else:
+                doc_abstract = ""
+
+            doc_text_512 = truncate_to_first_tokens(doc_abstract, tokenizer)
+
+            if doc_text_512 in doc_emb_cache:
+                doc_emb = doc_emb_cache[doc_text_512]
+            else:
+                doc_emb = sbert_model.encode([doc_text_512])
+                doc_emb_cache[doc_text_512] = doc_emb
+
+            bert_score = float(cosine_similarity(query_emb, doc_emb)[0][0])
+            final_score = bm25_score + BERT_COMB_WEIGHT * bm25_score * bert_score
+            query_scores.append((doc_id, final_score))
+
+        final_results[query_id] = query_scores
+
+    output_file = RESULTS_DIR / "combbert_bm25_ranking.txt"
+    write_trec_run(final_results, output_file, run_name="CombBERT_BM25")
+    print(f"Results written to: {output_file}")
+
+
+# Build CombBERT&BM25 baseline for evaluation.
+compute_combbert_bm25_baseline()
 
 
 # Re-rank with LambdaMART

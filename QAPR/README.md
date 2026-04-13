@@ -141,7 +141,11 @@ python 6_rerank_with_weights.py
 
 Applies query-specific weights: `Final Score = CombinedScore + α * MaxLex + (1-α) * MaxSem`
 
-**Output**: `./output/results/` (lambdamart_ranking.txt, mlp_ranking.txt)
+Also computes the **CombBERT&BM25 baseline**:
+- `Comb = BM25 + 0.25 * BM25 * BERT`
+- BERT score uses **abstract only**, truncated to the **first 512 tokenizer tokens**.
+
+**Output**: `./output/results/` (lambdamart_ranking.txt, mlp_ranking.txt, combbert_bm25_ranking.txt)
 
 ---
 
