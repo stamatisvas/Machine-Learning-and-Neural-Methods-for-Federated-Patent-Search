@@ -9,6 +9,15 @@ output_dir: "./output"
 
 # Dataset
 train_test_split: 0.8  # 80% train, 20% test
+split_seed: 42         # Used for deterministic query split
+
+# CLEF-IP fixed split mode
+# Enable only when your topic preparation yields exactly 1351 valid topics
+# (topics with non-empty EN abstract, description, and claims).
+clef_fixed_split: false
+clef_total_topics: 1351
+clef_train_topics: 1051
+clef_test_topics: 300
 
 # First-stage retrieval
 top_k: 1000  # Top-k candidates for re-ranking

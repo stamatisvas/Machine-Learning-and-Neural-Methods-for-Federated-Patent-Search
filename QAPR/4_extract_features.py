@@ -22,6 +22,11 @@ SPLITS_DIR = Path(config['output_dir']) / "splits"
 OUTPUT_DIR = Path(config['output_dir']) / "features"
 TRAIN_TEST_SPLIT = config['train_test_split']
 SBERT_MODEL = config['sbert_model']
+CLEF_FIXED_SPLIT = config.get('clef_fixed_split', config.get('paper_clef_split', False))
+CLEF_TOTAL_TOPICS = int(config.get('clef_total_topics', config.get('paper_clef_total_topics', 1351)))
+CLEF_TRAIN_TOPICS = int(config.get('clef_train_topics', config.get('paper_clef_train_topics', 1051)))
+CLEF_TEST_TOPICS = int(config.get('clef_test_topics', config.get('paper_clef_test_topics', 300)))
+SPLIT_SEED = int(config.get('split_seed', 42))
 
 print("=" * 80)
 print("Step 4: Extract Features")
@@ -48,6 +53,11 @@ sbert_model = SentenceTransformer(SBERT_MODEL)
 
 # Section names
 sections = ['abstract', 'description', 'claims']
+
+
+def has_all_required_query_sections(topic_entry: dict) -> bool:
+    """Return True when query has non-empty abstract/description/claims."""
+    return all(bool(topic_entry.get(section, "").strip()) for section in sections)
 
 
 def calculate_bm25_score(query_text: str, doc_text: str, corpus: list) -> float:
@@ -179,11 +189,55 @@ for query_id, group_idx in features_df.groupby('query_id').groups.items():
 # Split into train/test based on query_id
 print("\nSplitting into train/test sets...")
 
-unique_queries = features_df['query_id'].unique()
-n_train = int(len(unique_queries) * TRAIN_TEST_SPLIT)
+unique_queries = sorted(features_df['query_id'].unique())
+valid_queries = [
+    query_id for query_id in unique_queries
+    if query_id in topic_splits and has_all_required_query_sections(topic_splits[query_id])
+]
 
-train_queries = unique_queries[:n_train]
-test_queries = unique_queries[n_train:]
+print(f"Queries with extracted features: {len(unique_queries)}")
+print(f"Valid queries (EN abstract+description+claims present): {len(valid_queries)}")
+
+if CLEF_FIXED_SPLIT:
+    expected_total = CLEF_TOTAL_TOPICS
+    expected_train = CLEF_TRAIN_TOPICS
+    expected_test = CLEF_TEST_TOPICS
+    expected_sum = expected_train + expected_test
+
+    if expected_total != expected_sum:
+        raise ValueError(
+            "Invalid CLEF split configuration: "
+            f"clef_total_topics={expected_total} must equal "
+            f"clef_train_topics + clef_test_topics ({expected_sum})."
+        )
+
+    if len(valid_queries) != expected_total:
+        raise ValueError(
+            f"CLEF fixed split expects exactly {expected_total} valid queries, "
+            f"but found {len(valid_queries)}."
+        )
+
+    rng = np.random.default_rng(SPLIT_SEED)
+    shuffled_queries = valid_queries.copy()
+    rng.shuffle(shuffled_queries)
+
+    train_queries = shuffled_queries[:expected_train]
+    test_queries = shuffled_queries[expected_train:expected_train + expected_test]
+
+    print(
+        "CLEF fixed split enabled: "
+        f"{len(train_queries)} train / {len(test_queries)} test "
+        f"(seed={SPLIT_SEED})"
+    )
+else:
+    n_train = int(len(valid_queries) * TRAIN_TEST_SPLIT)
+    train_queries = valid_queries[:n_train]
+    test_queries = valid_queries[n_train:]
+    print(
+        "Standard split enabled: "
+        f"{len(train_queries)} train / {len(test_queries)} test "
+        f"(train_test_split={TRAIN_TEST_SPLIT})"
+    )
 
 train_df = features_df[features_df['query_id'].isin(train_queries)]
 test_df = features_df[features_df['query_id'].isin(test_queries)]

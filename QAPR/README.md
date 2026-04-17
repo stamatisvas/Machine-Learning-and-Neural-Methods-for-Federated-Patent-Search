@@ -274,6 +274,15 @@ output_dir: "./output"
 top_k: 1000              # Number of candidates for re-ranking
 max_section_words: 500   # Maximum words per section
 train_test_split: 0.8    # 80% train, 20% test
+split_seed: 42           # Deterministic query splitting
+
+# CLEF-IP fixed split mode
+# Use only when topic preprocessing yields exactly 1351 valid topics
+# with non-empty EN abstract, description, and claims.
+clef_fixed_split: false
+clef_total_topics: 1351
+clef_train_topics: 1051
+clef_test_topics: 300
 
 # BM25 parameters
 bm25_k1: 0.9
@@ -302,6 +311,11 @@ mlp_epochs: 50
 1. Prepare CLEF-IP data
 2. Edit `config.yaml` with your paths
 3. Run steps 1-7 in sequence
+
+If you want the exact split described in the thesis text (Section 5.3.1),
+set `clef_fixed_split: true`. In this mode, Step 4 validates that exactly
+1351 valid topics are available (non-empty EN abstract, description, claims),
+then performs a deterministic 1051/300 train/test split.
 
 **Expected Results**:
 
